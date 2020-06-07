@@ -61,97 +61,92 @@ server.get("/api/posts/:id/comments", (req, res) => {
         });
 });
 
-// get a single post of a user by its ID
-// router.get("/users/:id/posts/:postID", (req, res) => {
-// 	users.findUserPostById(req.params.id, req.params.postID)
-// 		.then((post) => {
-// 			if (post) {
-// 				res.json(post)
-// 			} else {
-// 				res.status(404).json({
-// 					message: "Post was not found",
-// 				})
-// 			}
-// 		})
-// 		.catch((error) => {
-// 			console.log(error)
-// 			res.status(500).json({
-// 				message: "Error getting the user post",
-// 			})
-// 		})
-// })
+server.post("/api/posts/", (req, res) => {
+    if (!req.body.title || !req.body.contents) {
+        return res.status(400).json({
+            message: "Missing user title or contents",
+        });
+    }
 
-// server.post("/api/posts", (req, res) => {
-//     // never trust data coming from the client,
-//     // always validate it to some degree. make sure it's what you're expecting
-//     if (!req.body.name || !req.body.bio) {
-//         return res.status(400).json({
-//             errorMessage: "Please provide name and bio for the user.",
-//         });
-//     }
+    db.insert(req.body)
+        .then((post) => {
+            res.status(201).json(post);
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).json({
+                message: "Error adding new post",
+            });
+        });
+});
 
-//     const newUser = db.createUser({
-//         name: req.body.name,
-//         bio: req.body.bio,
-//     });
+server.post("/api/posts/:id/comments", (req, res) => {
+    if (!req.body.text) {
+        return res.status(400).json({
+            message: "Missing text",
+        });
+    }
 
-//     try {
-//         if (newUser) {
-//             res.status(201).json(newUser);
-//         }
-//     } catch (err) {
-//         res.status(500).json({
-//             errorMessage:
-//                 "There was an error while saving the user to the database",
-//         });
-//     }
-// });
+    db.insertComment(req.body)
+        .then((post) => {
+            res.status(201).json(post);
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).json({
+                message: "Error adding comment",
+            });
+        });
+});
 
-// server.put("/api/posts/:id", (req, res) => {
-//     if (!req.body.name || !req.body.bio) {
-//         return res.status(400).json({
-//             errorMessage: "Please provide name and bio for the user.",
-//         });
-//     }
+server.put("/api/posts/:id", (req, res) => {
+    if (!req.body.title || !req.body.contents) {
+        return res.status(400).json({
+            message: "Missing user title or contents",
+        });
+    }
 
-//     const user = db.getUserById(req.params.id);
+    db.update(req.params.id, req.body)
+        .then((post) => {
+            if (!post) {
+                res.status(404).json({
+                    message: "The post could not be found",
+                });
+            } else {
+                return db.findById(req.params.id);
+            }
+        })
+        .then((post) => {
+            res.status(200).json(post);
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).json({
+                message: "Error updating the post",
+            });
+        });
+});
 
-//     try {
-//         if (!user) {
-//             res.status(404).json({
-//                 errorMessage: "The user with the specified ID does not exist.",
-//             });
-//         }
-//         const updatedUser = db.updateUser(user.id, {
-//             name: req.body.name || user.name,
-//             bio: req.body.bio || user.bio,
-//         });
-
-//         res.status(200).json(updatedUser);
-//     } catch (err) {
-//         res.status(500).json({
-//             errorMessage: "The user information could not be retrieved.",
-//         });
-//     }
-// });
-
-// server.delete("/api/posts/:id", (req, res) => {
-//     const user = db.getUserById(req.params.id);
-
-//     try {
-//         if (!user) {
-//             res.status(400).json({
-//                 errorMessage: "The user with the specified ID does not exist.",
-//             });
-//         }
-//         db.deleteUser(user.id);
-//         res.status(204).end();
-//     } catch (err) {
-//         res.status(500).json({
-//             errorMessage: "The user could not be removed.",
-//         });
-//     }
-// });
+server.delete("/api/posts/:id", (req, res) => {
+    db.remove(req.params.id)
+        .then((count) => {
+            if (count > 0) {
+                res.status(200).json({
+                    message: "The post has been deleted",
+                });
+            } else {
+                res.status(404).json({
+                    message: "The user could not be found",
+                });
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).json({
+                message: "Error deleting a post",
+            });
+        });
+});
 
 server.listen(8080, () => {
     console.log("server started on port 8080");
