@@ -70,7 +70,12 @@ server.post("/api/posts/", (req, res) => {
 
     db.insert(req.body)
         .then((post) => {
-            res.status(201).json(post);
+            if (post) {
+                return db.findById(post.id);
+            }
+        })
+        .then((post) => {
+            res.json(post);
         })
         .catch((error) => {
             console.log(error);
@@ -87,9 +92,24 @@ server.post("/api/posts/:id/comments", (req, res) => {
         });
     }
 
-    db.insertComment(req.body)
+    // .then((post) => {
+    //     res.status(201).json(post);
+    // })
+    db.findById(req.params.id)
         .then((post) => {
-            res.status(201).json(post);
+            if (!post) {
+                res.status(404).json({
+                    message: "Post not found",
+                });
+            } else {
+                // this is returning a new promise in the chain, so we get
+                // the result in the next `.then` call.
+                db.insertComment(req.body);
+                return db.findPostComments(req.params.id);
+            }
+        })
+        .then((comments) => {
+            res.json(comments);
         })
         .catch((error) => {
             console.log(error);
