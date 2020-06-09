@@ -72,7 +72,7 @@ const Posts = ({
                                 placeholder="Contents..."
                                 onChange={inputChange}
                                 value={formState.contents}
-                                rows="10"
+                                rows="20"
                             />
                         </div>
                         <button type="submit" className="btn btn-warning">
@@ -125,17 +125,17 @@ const Posts = ({
                                           >
                                               Edit
                                           </button>
-                                          <button
-                                              //type="button"
+                                          <span
                                               onClick={(e) => {
                                                   e.preventDefault();
+                                                  window.location.reload(true);
                                                   deletetPost(post.id);
-                                                  window.location.replace("/");
+                                                  //window.location.replace("/");
                                               }}
                                               className="btn btn-danger btn-sm"
                                           >
                                               Delete
-                                          </button>
+                                          </span>
                                       </td>
                                   </tr>
                               ))
