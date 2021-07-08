@@ -1,17 +1,24 @@
 {
-  "name": "node-api2-project",
-  "version": "0.0.1",
-  "description": "Project for Node API 2 Module",
-  "private": true,
-  "main": "index.js",
-  "scripts": {
-    "server": "nodemon index.js"
-  },
-  "dependencies": {
-    "knex": "^0.20.11",
-    "sqlite3": "^4.1.1"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.2"
-  }
+    "name": "node-api2-project",
+    "version": "0.0.1",
+    "description": "Project for Node API 2 Module",
+    "private": true,
+    "main": "index.js",
+    "scripts": {
+        "server": "nodemon index.js"
+    },
+    "dependencies": {
+        "axios": "^0.19.2",
+        "bootstrap": "^4.5.0",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "knex": "^0.20.11",
+        "react-redux": "^7.2.0",
+        "redux": "^4.0.5",
+        "redux-thunk": "^2.3.0",
+        "sqlite3": "^4.2.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.2"
+    }
 }
